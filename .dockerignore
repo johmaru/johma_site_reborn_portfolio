@@ -1,0 +1,12 @@
+# Ignore version control files
+.git
+.gitignore
+
+# Ignore IDE/editor specific files
+.vscode/
+*.code-workspace
+
+# Ignore local build artifacts.
+# This is the CRITICAL part to prevent the Windows binary from being copied.
+*.exe
+server

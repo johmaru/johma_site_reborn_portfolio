@@ -1,0 +1,25 @@
+# Logs
+*.log
+firebase-debug.log*
+firebase-debug.*.log*
+
+# Firebase / Google Cloud local data
+.firebase/
+.firebaserc
+application_default_credentials.json
+service-account*.json
+*.pem
+*.key
+
+# Local environment
+.env
+.env.*
+
+# Editor / OS
+.vscode/
+.DS_Store
+
+# Build / coverage
+coverage/
+bin/
+dist/
