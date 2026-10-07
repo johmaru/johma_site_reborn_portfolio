@@ -7,8 +7,8 @@ import (
 	"os"
 
 	firebase "firebase.google.com/go/v4"
-	"github.com/Johmaru/johma_site_reborn/src/handlers"
-	"github.com/Johmaru/johma_site_reborn/src/middleware"
+	"github.com/johmaru/johma_site_reborn_portfolio/src/handlers"
+	"github.com/johmaru/johma_site_reborn_portfolio/src/middleware"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/api/option"
 )
