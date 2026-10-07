@@ -7,7 +7,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"firebase.google.com/go/v4/auth"
-	"github.com/Johmaru/johma_site_reborn/src/models"
+	"github.com/johmaru/johma_site_reborn_portfolio/src/models"
 	"github.com/gin-gonic/gin"
 )
 
