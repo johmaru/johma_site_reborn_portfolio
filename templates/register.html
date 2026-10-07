@@ -1,0 +1,99 @@
+<div class="container">
+    <h1>アカウント作成</h1>
+    <form id="registerForm">
+        <div class="form-group">
+            <label for="email">メールアドレス:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">パスワード:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">パスワード再入力:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+        </div>
+        <div class="form-group">
+            <label for="username">ユーザー名:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <button type="submit">アカウントを作成する</button>
+    </form>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "YOUR_FIREBASE_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_FIREBASE_APP_ID",
+            measurementId: "YOUR_MEASUREMENT_ID"
+        };
+        
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        const auth = firebase.auth();
+
+        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+            try {
+                auth.useEmulator('http://localhost:9099');
+            } catch (e) {
+                // ホットリロードなどで既に設定されている場合のエラーを無視
+                console.log(e);
+            }
+        }
+        
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value;
+            
+            try {
+
+                if (password !== document.getElementById('confirmPassword').value) {
+                    alert('パスワードが一致しません');
+                    return;
+                }
+
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const firebaseUser = userCredential.user;
+                
+                await firebaseUser.updateProfile({
+                    displayName: username
+                });
+                
+                const idToken = await firebaseUser.getIdToken();
+                
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        idToken: idToken,
+                        email: email,
+                        displayName: username
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log('ユーザー作成成功');
+                    alert('アカウントが作成されました');
+                    window.location.href = '/';
+                } else {
+                    const errorData = await response.json();
+                    console.error('ユーザー作成失敗:', errorData);
+                    alert('エラーが発生しました: ' + errorData.error);
+                }
+            } catch (error) {
+                console.error('エラー:', error);
+                alert('エラーが発生しました: ' + error.message);
+            }
+        });
+    </script>
+</div>

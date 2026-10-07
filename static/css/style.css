@@ -1,0 +1,32 @@
+
+button,
+input[type="submit"],
+input[type="button"] {
+    font-size: 0.7rem;
+    padding: 0.5rem 1rem;
+}
+
+article#content {
+    min-height: 100px;
+}
+
+nav {
+    align-items:  flex-end;
+}
+
+.nav-links, .nav-controls {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+}
+
+.nav-controls > button,
+.nav-controls > select {
+    width: auto;
+}
+
+select#language-select {
+    font-size: 0.7rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}

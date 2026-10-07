@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="{{ .lang }}" data-theme="{{ .theme }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .title }}</title>
+    <link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.green.min.css"
+>
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Johmaru's WebSite</h1>
+    </header>
+
+    <nav>
+        {{if not .devmode}}
+            <div class="nav-links" id="nav-links">
+                <button id="home-button" onclick="fetchContent('/home')">Home</button>
+                <button id="about-button" onclick="fetchContent('/about')">About</button>
+            </div>
+        {{end}}
+        <div class="nav-controls">
+            {{if not .isLogin}}
+                <button id="register-button" onclick="fetchContent('/register')">Register</button>
+            {{end}}
+            <button id="theme-toggle"></button>
+            <select id="language-select" name="language-select" aria-label="Language Select" required>
+                <option selected disabled value="">Language</option>
+                <option value="en">English</option>
+                <option value="ja">日本語</option>
+            </select>
+        </div>
+    </nav>
+
+    <main>
+        <article id="content">
+            {{if .devmode}}
+                {{template "nowdev.html" .}}
+            {{else}}
+                {{template "home.html" .}}
+            {{end}}
+        </article>
+    </main>
+
+    <script>
+        async function fetchContent(endpoint) {
+            const contentDiv = document.getElementById('content');
+            if (!contentDiv) {
+                console.error('Error: #content element not found.');
+                return;
+            }
+            try {
+                const response = await fetch(endpoint);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const html = await response.text();
+                contentDiv.innerHTML = html;
+
+                const scripts = contentDiv.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    
+                    Array.from(oldScript.attributes).forEach(attr => {
+                        newScript.setAttribute(attr.name, attr.value);
+                    });
+                    
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            } catch (error) {
+                contentDiv.innerHTML = `<p>コンテンツの読み込みに失敗しました: ${error}</p>`;
+                console.error('Fetch error:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+
+            const currentLang = document.documentElement.lang;
+
+            const navLinks = document.getElementById('nav-links');
+            if (navLinks) {
+
+                if (currentLang === 'ja') {
+                    document.getElementById('home-button').textContent = 'ホーム';
+                    document.getElementById('about-button').textContent = '作者について';
+                } else if (currentLang === 'en') {
+                    document.getElementById('home-button').textContent = 'Home';
+                    document.getElementById('about-button').textContent = 'About';
+                }
+            }
+            
+
+            const themeToggle = document.getElementById('theme-toggle');
+            if (themeToggle) {
+
+                const htmlElement = document.documentElement;
+                const currentIsDark = htmlElement.getAttribute('data-theme') === 'dark';
+                
+                if (currentLang === 'ja') {
+                    themeToggle.textContent = currentIsDark ? 'ライトモード' : 'ダークモード';
+                } else if (currentLang === 'en') {
+                    themeToggle.textContent = currentIsDark ? 'Light Mode' : 'Dark Mode';
+                }
+
+                
+                themeToggle.addEventListener('click', () => {
+                        const isDark = htmlElement.getAttribute('data-theme') === 'dark';
+                        const newTheme = isDark ? 'light' : 'dark';
+                        const currentLang = document.documentElement.lang;
+
+                        htmlElement.setAttribute('data-theme', newTheme);
+
+                        if (currentLang === 'ja') {
+                            themeToggle.textContent = newTheme === 'light' ? 'ライトモード' : 'ダークモード';
+                        } else if (currentLang === 'en') {
+                            themeToggle.textContent = newTheme === 'light' ? 'Light Mode' : 'Dark Mode';
+                        }
+
+                        document.cookie = `theme=${newTheme}; path=/; max-age=31536000; SameSite=Lax`;
+                    });
+                }
+
+            const languageSelect = document.getElementById('language-select');
+            if (languageSelect) {
+                languageSelect.addEventListener('change', (event) => {
+                    const selectedLanguage = event.target.value;
+                    document.cookie = `lang=${selectedLanguage}; path=/; max-age=31536000; SameSite=Lax`;
+                    window.location.reload();
+                });
+            }
+        });
+    </script>
+    <footer>
+        <p>&copy; 2025 Johmaru</p>
+    </footer>
+</body>
+</html>
