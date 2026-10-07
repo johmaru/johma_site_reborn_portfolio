@@ -64,7 +64,7 @@ Firebase CLI と Docker を利用します。
 Firebase Emulator を起動します。
 
 ```bash
-firebase emulators:start --only firestore,auth
+firebase emulators:start --project demo-johma-site --only firestore,auth
 ```
 
 別ターミナルで Docker イメージを起動します。
@@ -75,4 +75,4 @@ make lrun
 
 `http://localhost:8080` からアクセスできます。
 
-Firebase のプロジェクト設定を利用する場合は、環境に合わせて設定値を変更してください。
+実際の Firebase プロジェクトを利用する場合は、`templates/register.html` と実行時のプロジェクト設定を環境に合わせて変更してください。
