@@ -1,4 +1,4 @@
-module github.com/Johmaru/johma_site_reborn
+module github.com/johmaru/johma_site_reborn_portfolio
 
 go 1.24.5
 
